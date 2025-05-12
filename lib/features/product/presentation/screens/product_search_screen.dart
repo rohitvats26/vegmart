@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:vegmart/core/theme/app_colors.dart';
+import 'package:vegmart/core/widgets/product_add_popup.dart';
 import 'package:vegmart/features/product/presentation/screens/product_detail_screen.dart';
 import 'package:vegmart/features/product/presentation/widgets/product_card.dart';
 import 'package:vegmart/features/product/presentation/widgets/shimmer_product_card.dart';
@@ -62,6 +64,20 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> with SingleTi
       'originalPrice': '45',
       'quantity': '1kg',
       'discount': '10% OFF',
+    },{
+      'title': 'Big Finite Pack',
+      'image': 'assets/vegetables/Muskmelon.jpeg',
+      'currentPrice': '32',
+      'originalPrice': '45',
+      'quantity': '1kg',
+      'discount': '10% OFF',
+    },{
+      'title': 'Big Finite Pack',
+      'image': 'assets/vegetables/Muskmelon.jpeg',
+      'currentPrice': '32',
+      'originalPrice': '45',
+      'quantity': '1kg',
+      'discount': '10% OFF',
     },
   ];
 
@@ -69,10 +85,7 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> with SingleTi
   void initState() {
     super.initState();
     _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
-    _fadeAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
     _searchFocusNode.addListener(_handleFocusChange);
   }
 
@@ -115,41 +128,38 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> with SingleTi
     }
   }
 
-  void _toggleFavorite(int index) {
-    setState(() {
-      products[index]['isFavorite'] = !products[index]['isFavorite'];
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.extension<AppColors>()!;
-    final isDark = theme.brightness == Brightness.dark;
+    final isDarkMode = theme.brightness == Brightness.dark;
     final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth >= 400 && screenWidth < 500;
-    final isTablet = screenWidth >= 500 && screenWidth < 1200;
-    final isDesktop = screenWidth >= 1200 && screenWidth < 1600;
-    final isExtraLargeDesktop = screenWidth >= 1600;
+    final isMobile = screenWidth < 500;
+    final isTablet = screenWidth >= 500 && screenWidth < 1024;
+    final isDesktop = screenWidth >= 1024 && screenWidth < 1400;
+    final isExtraLargeDesktop = screenWidth > 1400;
+    final backgroundColor = isDarkMode ? Colors.grey[900] : Color(0xFFF8F9FA);
 
     return Scaffold(
-      appBar: _buildAppBar(theme, isDark, isTablet, isDesktop),
-      backgroundColor: Colors.white,
+      appBar: _buildAppBar(theme, isDarkMode, isTablet, isDesktop),
+      backgroundColor: backgroundColor,
       body: Stack(
         children: [
-          _buildMainContent(theme, colors, isMobile, isTablet, isDesktop, isExtraLargeDesktop),
-          if (showSuggestions && !isSearching) _buildSearchSuggestions(theme, isDark, isTablet),
+          _buildMainContent(theme, colors, isMobile, isTablet, isDesktop, isExtraLargeDesktop, isDarkMode),
+          if (showSuggestions && !isSearching) _buildSearchSuggestions(theme, isDarkMode, isTablet),
         ],
       ),
     );
   }
 
-  AppBar _buildAppBar(ThemeData theme, bool isDark, bool isTablet, bool isDesktop) {
+  AppBar _buildAppBar(ThemeData theme, bool isDarkMode, bool isTablet, bool isDesktop) {
     return AppBar(
       automaticallyImplyLeading: true,
-      backgroundColor: Colors.white,
-      toolbarHeight: isTablet ? 120 : 80, // Set custom height for AppBar
-      titleSpacing: 0, // Remove default title spacing
+      backgroundColor: isDarkMode ? Colors.grey[900] : Color(0xFFF8F9FA),
+      toolbarHeight: isTablet ? 120 : 80,
+      // Set custom height for AppBar
+      titleSpacing: 0,
+      // Remove default title spacing
       title: Container(
         padding: EdgeInsets.fromLTRB(isTablet ? 24 : 16, isDesktop ? 30 : 30, isTablet ? 24 : 16, isDesktop ? 30 : 30),
         child: Material(
@@ -157,7 +167,7 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> with SingleTi
           child: Container(
             height: isTablet ? 56 : 48,
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E2125) : Colors.white,
+              color: isDarkMode ? const Color(0xFF1E2125) : Colors.white,
               borderRadius: BorderRadius.circular(14),
               boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 12, offset: const Offset(0, 4))],
             ),
@@ -209,44 +219,26 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> with SingleTi
     );
   }
 
-  Widget _buildMainContent(
-    ThemeData theme,
-    AppColors colors,
-    bool isMobile,
-    bool isTablet,
-    bool isDesktop,
-    bool isExtraLargeDesktop,
-  ) {
+  Widget _buildMainContent(ThemeData theme, AppColors colors, bool isMobile, bool isTablet, bool isDesktop, bool isExtraLargeDesktop, bool isDark) {
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(isTablet ? 24 : 16, isTablet ? 24 : 16, isTablet ? 24 : 16, isTablet ? 120 : 100),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (!isSearching) _buildPopularPacksSection(theme, isMobile, isTablet, isDesktop, isExtraLargeDesktop),
+          if (!isSearching) _buildPopularPacksSection(theme, isMobile, isTablet, isDesktop, isExtraLargeDesktop, isDark),
           if (isSearching) _buildSearchResults(theme, colors, isTablet),
         ],
       ),
     );
   }
 
-  Widget _buildPopularPacksSection(ThemeData theme, bool isMobile, bool isTablet, bool isDesktop, bool isExtraLargeDesktop) {
+  Widget _buildPopularPacksSection(ThemeData theme, bool isMobile, bool isTablet, bool isDesktop, bool isExtraLargeDesktop, bool isDark) {
     final crossAxisCount =
         isExtraLargeDesktop
-            ? 5
+            ? 7
             : isDesktop
-            ? 4
-            : (isTablet ? 3 : 2);
-    final childAspectRatio =
-        isExtraLargeDesktop
-            ? 1.15
-            : isDesktop
-            ? 0.68
-            : isTablet
-            ? 0.77
-            : isMobile
-            ? 0.81
-            : 0.45;
-
+            ? 6
+            : (isTablet ? 4 : 2);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -256,6 +248,7 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> with SingleTi
             'Popular Pack',
             style: theme.textTheme.displaySmall?.copyWith(
               fontSize: isTablet ? theme.textTheme.displaySmall!.fontSize! * 1.2 : null,
+              color: isDark ? Colors.white : const Color(0xFF000008),
             ),
           ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1),
         ),
@@ -264,9 +257,9 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> with SingleTi
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: crossAxisCount,
-            crossAxisSpacing: 8.0,
+            crossAxisSpacing: isExtraLargeDesktop ? 15 : 8.0,
             mainAxisSpacing: 8.0,
-            mainAxisExtent: 320,
+            mainAxisExtent: 310,
           ),
           itemCount: products.length,
           itemBuilder:
@@ -278,8 +271,13 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> with SingleTi
                 tag: 'Most Bought',
                 quantity: products[index]['quantity'],
                 discount: products[index]['discount'],
+                onProductTap: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => ProductDetailScreen(),
+                  ));
+                },
                 onAddPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Added ${products[index]['name']} to cart')));
+                  ProductAddPopup.show(context);
                 },
               ).animate(delay: (100 * index).ms).fadeIn(duration: 300.ms).slideY(begin: 0.1),
         ),
@@ -301,9 +299,7 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> with SingleTi
               SizedBox(height: isTablet ? 24 : 16),
               Text(
                 'Searching for "${_searchController.text}"',
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  fontSize: isTablet ? theme.textTheme.bodyLarge!.fontSize! * 1.1 : null,
-                ),
+                style: theme.textTheme.bodyLarge?.copyWith(fontSize: isTablet ? theme.textTheme.bodyLarge!.fontSize! * 1.1 : null),
               ),
             ],
           ),
@@ -311,10 +307,7 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> with SingleTi
         SizedBox(height: isTablet ? 32 : 24),
         ...List.generate(
           3,
-          (index) => Padding(
-            padding: EdgeInsets.only(bottom: isTablet ? 24 : 16),
-            child: ShimmerProductCard(colors: colors, isTablet: isTablet),
-          ),
+          (index) => Padding(padding: EdgeInsets.only(bottom: isTablet ? 24 : 16), child: ShimmerProductCard(colors: colors, isTablet: isTablet)),
         ),
       ],
     );
@@ -362,8 +355,7 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> with SingleTi
 
   List<Widget> _buildSuggestionsList(ThemeData theme, bool isTablet) {
     final query = _searchController.text.toLowerCase();
-    final suggestions =
-        query.isEmpty ? searchSuggestions : searchSuggestions.where((item) => item.toLowerCase().contains(query)).toList();
+    final suggestions = query.isEmpty ? searchSuggestions : searchSuggestions.where((item) => item.toLowerCase().contains(query)).toList();
 
     return suggestions
         .map(
@@ -372,10 +364,7 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> with SingleTi
             leading: Container(
               width: isTablet ? 40 : 30,
               height: isTablet ? 40 : 30,
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
-              ),
+              decoration: BoxDecoration(color: theme.colorScheme.primary.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
               child: Icon(Icons.search_rounded, size: isTablet ? 20 : 18, color: theme.colorScheme.primary),
             ),
             title: Text(
@@ -432,9 +421,7 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> with SingleTi
                   SizedBox(height: isTablet ? 12 : 8),
                   Text(
                     'Say something like "Organic Avocado"',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontSize: isTablet ? theme.textTheme.bodyMedium!.fontSize! * 1.1 : null,
-                    ),
+                    style: theme.textTheme.bodyMedium?.copyWith(fontSize: isTablet ? theme.textTheme.bodyMedium!.fontSize! * 1.1 : null),
                   ),
                   SizedBox(height: isTablet ? 32 : 24),
                   Row(
@@ -443,17 +430,12 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> with SingleTi
                       TextButton(
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.symmetric(horizontal: isTablet ? 32 : 24, vertical: isTablet ? 18 : 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            side: BorderSide(color: theme.dividerColor),
-                          ),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide(color: theme.dividerColor)),
                         ),
                         onPressed: () => Navigator.pop(context),
                         child: Text(
                           'Cancel',
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            fontSize: isTablet ? theme.textTheme.bodyLarge!.fontSize! * 1.1 : null,
-                          ),
+                          style: theme.textTheme.bodyLarge?.copyWith(fontSize: isTablet ? theme.textTheme.bodyLarge!.fontSize! * 1.1 : null),
                         ),
                       ),
                       ElevatedButton(

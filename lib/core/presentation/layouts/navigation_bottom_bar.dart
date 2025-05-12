@@ -161,7 +161,7 @@ class _NavigationBottomBarState extends State<NavigationBottomBar> {
                       AnimatedContainer(
                         duration: widget.animationDuration,
                         curve: widget.animationCurve,
-                        padding: const EdgeInsets.fromLTRB(8, 0, 8, 6),
+                        padding: const EdgeInsets.fromLTRB(8, 3, 8, 6),
                         child: AnimatedSwitcher(
                           duration: widget.animationDuration,
                           switchInCurve: widget.animationCurve,

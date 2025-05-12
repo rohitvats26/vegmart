@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      home: ProductSearchScreen(),//LoginScreen(permissionGranted: permissionGranted),
+      home: HomeScreen(),//LoginScreen(permissionGranted: permissionGranted),
     );
   }
 }

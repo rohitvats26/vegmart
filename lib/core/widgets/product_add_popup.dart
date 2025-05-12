@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:vegmart/core/widgets/add_to_cart_popup.dart';
+import 'package:vegmart/core/widgets/discount_banner.dart';
 import 'package:vegmart/data/models/product_option.dart';
 
 class ProductAddPopup {
@@ -30,15 +31,16 @@ class _ProductPopupContent extends StatefulWidget {
 }
 
 class __ProductPopupContentState extends State<_ProductPopupContent> {
-  // Track the count for each product option
   final Map<int, int> _itemCounts = {};
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
     final List<ProductOption> productOptions = [
       ProductOption(
-        imagePath: 'assets/vegetables/tomatoes.png',
+        imagePath: 'assets/vegetables/Muskmelon.jpeg',
         isBestValue: false,
         discount: '10% OFF',
         details: '75 g',
@@ -48,7 +50,7 @@ class __ProductPopupContentState extends State<_ProductPopupContent> {
         originalPrice: '₹60',
       ),
       ProductOption(
-        imagePath: 'assets/vegetables/cabbage.png',
+        imagePath: 'assets/vegetables/Muskmelon.jpeg',
         isBestValue: false,
         details: '75 g',
         combo: '1',
@@ -58,13 +60,15 @@ class __ProductPopupContentState extends State<_ProductPopupContent> {
       ),
     ];
 
-    // Initialize counts if not already set
     for (int i = 0; i < productOptions.length; i++) {
       _itemCounts.putIfAbsent(i, () => 0);
     }
 
     return Container(
-      decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
+      decoration: BoxDecoration(
+        color: isDarkMode ? theme.cardColor : Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+      ),
       constraints: BoxConstraints(maxHeight: widget.isMobile ? widget.screenHeight * 0.7 : widget.screenHeight * 0.6),
       child: SingleChildScrollView(
         child: Column(
@@ -77,11 +81,10 @@ class __ProductPopupContentState extends State<_ProductPopupContent> {
                 child: Container(
                   width: 40,
                   height: 4,
-                  decoration: BoxDecoration(color: const Color(0xFFE0E0E0), borderRadius: BorderRadius.circular(2)),
+                  decoration: BoxDecoration(color: isDarkMode ? Colors.grey[600] : const Color(0xFFE0E0E0), borderRadius: BorderRadius.circular(2)),
                 ),
               ),
             ),
-
             // Header with product name
             Padding(
               padding: EdgeInsets.fromLTRB(16, widget.isMobile ? 12 : 16, 16, widget.isMobile ? 12 : 16),
@@ -90,7 +93,7 @@ class __ProductPopupContentState extends State<_ProductPopupContent> {
                 style: TextStyle(
                   fontSize: widget.isMobile ? 18 : 20,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF212121),
+                  color: isDarkMode ? Colors.white : const Color(0xFF212121),
                 ),
               ),
             ),
@@ -106,7 +109,10 @@ class __ProductPopupContentState extends State<_ProductPopupContent> {
                   child: Container(
                     margin: EdgeInsets.symmetric(horizontal: widget.isMobile ? 16 : 24),
                     padding: const EdgeInsets.fromLTRB(5, 18, 5, 5),
-                    decoration: BoxDecoration(color: Color(0xFFFFEEE6), borderRadius: BorderRadius.circular(12)),
+                    decoration: BoxDecoration(
+                      color: isDarkMode ? Colors.grey[800] : const Color(0xFFFFEEE6),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: Stack(
                       clipBehavior: Clip.none,
                       children: [
@@ -118,10 +124,11 @@ class __ProductPopupContentState extends State<_ProductPopupContent> {
                           child: Center(
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                              child: const Text(
-                                'BEST VALUE',
-                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w900, color: Color(0xFFD85511)),
+                              decoration: BoxDecoration(
+                                color: isDarkMode ? theme.primaryColorDark : Colors.white,
+                                borderRadius: BorderRadius.circular(8),
                               ),
+                              child: Text('BEST VALUE', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w900, color: const Color(0xFFD85511))),
                             ),
                           ),
                         ),
@@ -145,7 +152,7 @@ class __ProductPopupContentState extends State<_ProductPopupContent> {
               child: Container(
                 height: 50,
                 width: double.infinity,
-                decoration: BoxDecoration(color: Color(0xFF2A9F75), borderRadius: BorderRadius.circular(15)),
+                decoration: BoxDecoration(color: theme.primaryColor, borderRadius: BorderRadius.circular(15)),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -156,30 +163,19 @@ class __ProductPopupContentState extends State<_ProductPopupContent> {
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           child: Text(
                             "Item Total : ₹${_calculateTotal(productOptions)}",
-                            style: TextStyle(
-                              fontSize: widget.isMobile ? 16 : 17,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
+                            style: TextStyle(fontSize: widget.isMobile ? 16 : 17, fontWeight: FontWeight.w600, color: Colors.white),
                           ),
                         ),
-                        Spacer(),
+                        const Spacer(),
                         InkWell(
                           child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 20),
                             child: Text(
                               "Confirm",
-                              style: TextStyle(
-                                fontSize: widget.isMobile ? 16 : 17,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
+                              style: TextStyle(fontSize: widget.isMobile ? 16 : 17, fontWeight: FontWeight.w600, color: Colors.white),
                             ),
                           ),
-                          onTap: () => {
-                            Navigator.pop(context),
-                            AddToCartPopup.show(context)
-                          },
+                          onTap: () => {Navigator.pop(context), AddToCartPopup.show(context)},
                         ),
                       ],
                     ),
@@ -194,27 +190,36 @@ class __ProductPopupContentState extends State<_ProductPopupContent> {
   }
 
   Widget _buildProductCardContent(int index, ProductOption option, bool isMobile, ThemeData theme) {
+    final isDarkMode = theme.brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDarkMode ? theme.cardColor : Colors.white,
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: option.isBestValue ? Colors.transparent : const Color(0xFFEEEEEE)),
-        boxShadow: [
-          BoxShadow(color: Color(0xFFEDECF1).withOpacity(1), blurRadius: 20, offset: Offset(0, 6), spreadRadius: 0),
-          BoxShadow(color: Colors.white.withOpacity(0.4), blurRadius: 0, offset: Offset(0, -2), spreadRadius: 0),
-        ],
+        border: Border.all(
+          color:
+              option.isBestValue
+                  ? Colors.transparent
+                  : isDarkMode
+                  ? Colors.grey[700]!
+                  : const Color(0xFFEEEEEE),
+        ),
+        boxShadow:
+            isDarkMode
+                ? []
+                : [
+                  BoxShadow(color: const Color(0xFFEDECF1).withOpacity(1), blurRadius: 20, offset: const Offset(0, 6), spreadRadius: 0),
+                  BoxShadow(color: Colors.white.withOpacity(0.4), blurRadius: 0, offset: const Offset(0, -2), spreadRadius: 0),
+                ],
       ),
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          // Discount badge (positioned in top-left corner)
-          if (option.discount != null) Positioned(top: 0, left: 0, child: _buildBadge(option.discount!, theme)),
           Padding(
             padding: EdgeInsets.all(isMobile ? 10 : 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Product row
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -222,15 +227,21 @@ class __ProductPopupContentState extends State<_ProductPopupContent> {
                     Container(
                       width: isMobile ? 70 : 80,
                       height: isMobile ? 70 : 80,
-                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
-                      child: Image.asset(
-                        option.imagePath,
-                        fit: BoxFit.contain,
-                        errorBuilder:
-                            (context, error, stackTrace) => Container(
-                              color: const Color(0xFFF5F5F5),
-                              child: const Icon(Icons.fastfood, color: Color(0xFF9E9E9E), size: 30),
-                            ),
+                      decoration: BoxDecoration(color: isDarkMode ? Colors.grey[800] : const Color(0xFFF5F5F5)),
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.all(Radius.circular(10)),
+                        child: Image.network(
+                          option.imagePath,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          color: isDarkMode ? Colors.white.withOpacity(0.9) : null,
+                          colorBlendMode: isDarkMode ? BlendMode.modulate : null,
+                          errorBuilder:
+                              (context, error, stackTrace) => Container(
+                                color: isDarkMode ? Colors.grey[800] : const Color(0xFFF5F5F5),
+                                child: Icon(Icons.fastfood, color: isDarkMode ? Colors.grey[500] : const Color(0xFF9E9E9E), size: 30),
+                              ),
+                        ),
                       ),
                     ),
 
@@ -244,13 +255,17 @@ class __ProductPopupContentState extends State<_ProductPopupContent> {
                         children: [
                           Text(
                             option.details,
-                            style: TextStyle(fontSize: isMobile ? 13 : 14, color: Colors.black, fontWeight: FontWeight.w600),
+                            style: TextStyle(
+                              fontSize: isMobile ? 13 : 14,
+                              color: isDarkMode ? Colors.white : Colors.black,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                           SizedBox(height: 4),
                           if (option.combo != null && option.combo != '1')
                             Text(
                               "x ${option.combo!}",
-                              style: TextStyle(fontSize: isMobile ? 12 : 13, color: const Color(0xFF757575)),
+                              style: TextStyle(fontSize: isMobile ? 12 : 13, color: isDarkMode ? Colors.grey[400] : const Color(0xFF757575)),
                             ),
                         ],
                       ),
@@ -259,7 +274,7 @@ class __ProductPopupContentState extends State<_ProductPopupContent> {
                     Container(
                       width: 2,
                       height: 55,
-                      color: const Color(0xFFEEEEEE).withOpacity(0.8),
+                      color: isDarkMode ? Colors.grey[700]! : const Color(0xFFEEEEEE).withOpacity(0.8),
                       margin: const EdgeInsets.symmetric(horizontal: 8),
                     ),
                     // Product details
@@ -276,7 +291,7 @@ class __ProductPopupContentState extends State<_ProductPopupContent> {
                                   option.unitPrice,
                                   style: TextStyle(
                                     fontSize: isMobile ? 11 : 12,
-                                    color: Color(0xFF616161),
+                                    color: isDarkMode ? Colors.grey[400] : const Color(0xFF616161),
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -291,7 +306,7 @@ class __ProductPopupContentState extends State<_ProductPopupContent> {
                                   style: TextStyle(
                                     fontSize: isMobile ? 14 : 15,
                                     fontWeight: FontWeight.w700,
-                                    color: const Color(0xFF212121),
+                                    color: isDarkMode ? Colors.white : const Color(0xFF212121),
                                   ),
                                 ),
                                 if (option.originalPrice != null) ...[
@@ -301,7 +316,7 @@ class __ProductPopupContentState extends State<_ProductPopupContent> {
                                     style: TextStyle(
                                       fontSize: isMobile ? 12 : 13,
                                       decoration: TextDecoration.lineThrough,
-                                      color: const Color(0xFF9E9E9E),
+                                      color: isDarkMode ? Colors.grey[500] : const Color(0xFF9E9E9E),
                                     ),
                                   ),
                                 ],
@@ -316,30 +331,33 @@ class __ProductPopupContentState extends State<_ProductPopupContent> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (_itemCounts[index]! > 0) _buildCounter(index, isMobile) else _buildAddButton(index, isMobile),
-                      ],
+                      children: [if (_itemCounts[index]! > 0) _buildCounter(index, isMobile, theme) else _buildAddButton(index, isMobile, theme)],
                     ),
                   ],
                 ),
               ],
             ),
           ),
+          if (option.discount != null)
+            DiscountBanner(
+              discount: option.discount,
+              bannerTopOffset: 6,
+              bannerLeftOffset: -10,
+              kHeight: 50,
+              kWidth: 80,
+              kTextSizeLarge: 8,
+              kTextSizeSmall: 7,
+            ),
         ],
       ),
     );
   }
 
-  Widget _buildAddButton(int index, bool isMobile) {
+  Widget _buildAddButton(int index, bool isMobile, ThemeData theme) {
     return InkWell(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-        child: Center(
-          child: Text(
-            "ADD",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: Color(0xFF2A9F75)),
-          ),
-        ),
+        child: Center(child: Text("ADD", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: theme.primaryColor))),
       ),
       onTap: () {
         setState(() {
@@ -349,10 +367,10 @@ class __ProductPopupContentState extends State<_ProductPopupContent> {
     );
   }
 
-  Widget _buildCounter(int index, bool isMobile) {
+  Widget _buildCounter(int index, bool isMobile, ThemeData theme) {
     final count = _itemCounts[index] ?? 0;
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 20),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -360,27 +378,23 @@ class __ProductPopupContentState extends State<_ProductPopupContent> {
             height: 15.0,
             width: 15.0,
             svgAsset: 'icons/minus.svg',
+            color: theme.primaryColor,
             onTap: count > 0 ? () => setState(() => _itemCounts[index] = count - 1) : null,
           ),
           SizedBox(
             width: 30,
             child: Center(
               child: Text(
-              _itemCounts[index].toString(),
-              style: TextStyle(
-                fontSize: 16,
-                fontFamily: 'SFProText',
-                fontWeight: FontWeight.w900,
-                color: Color(0xFF2A9F75),
+                _itemCounts[index].toString(),
+                style: TextStyle(fontSize: 16, fontFamily: 'SFProText', fontWeight: FontWeight.w900, color: theme.primaryColor),
               ),
             ),
-            ),
           ),
-          // Increment Button
           _buildSvgButton(
             height: 16,
             width: 16,
             svgAsset: 'icons/plus.svg',
+            color: theme.primaryColor,
             onTap: () => setState(() => _itemCounts[index] = count + 1),
           ),
         ],
@@ -388,29 +402,14 @@ class __ProductPopupContentState extends State<_ProductPopupContent> {
     );
   }
 
-  Widget _buildSvgButton({
-    required double height,
-    required double width,
-    required String svgAsset,
-    VoidCallback? onTap,
-  }) {
+  Widget _buildSvgButton({required double height, required double width, required String svgAsset, Color? color, VoidCallback? onTap}) {
     return Material(
+      color: Colors.transparent,
       child: InkWell(
+        borderRadius: BorderRadius.circular(20),
         onTap: onTap,
-        child: SizedBox(
-          child: Center(
-            child: SvgPicture.asset(svgAsset, width: width, height: height),
-          ),
-        ),
+        child: SizedBox(child: Center(child: SvgPicture.asset(svgAsset, width: width, height: height, color: color))),
       ),
-    );
-  }
-
-  Widget _buildBadge(String text, ThemeData theme) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(color: theme.primaryColor, borderRadius: BorderRadius.circular(4)),
-      child: Text(text, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white)),
     );
   }
 
@@ -419,7 +418,6 @@ class __ProductPopupContentState extends State<_ProductPopupContent> {
     for (int i = 0; i < options.length; i++) {
       final count = _itemCounts[i] ?? 0;
       if (count > 0) {
-        // Extract numeric value from currentPrice (removing ₹ symbol)
         final priceStr = options[i].currentPrice.replaceAll('₹', '');
         final price = double.tryParse(priceStr) ?? 0;
         total += price * count;

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:vegmart/features/home/data/models/category_item.dart';
+import 'package:vegmart/features/home/presentation/widgets/header_category_item.dart';
 import 'package:vegmart/features/notification/presentation/screens/notification_screen.dart';
 import 'package:vegmart/features/product/presentation/screens/product_search_screen.dart';
 
@@ -9,6 +11,7 @@ class Header extends StatefulWidget {
   final Function(int) onCategoryChanged;
   final Function() onCartPressed;
   final int cartItemCount;
+  final int selectedCategoryIndex;
 
   const Header({
     super.key,
@@ -17,6 +20,7 @@ class Header extends StatefulWidget {
     required this.onCategoryChanged,
     required this.onCartPressed,
     required this.cartItemCount,
+    required this.selectedCategoryIndex,
   });
 
   @override
@@ -27,26 +31,32 @@ class _HeaderState extends State<Header> with TickerProviderStateMixin {
   final bool _searchExpanded = false;
   final FocusNode _searchFocusNode = FocusNode();
   bool _isSearching = false;
-  late int _selectedIndex;
   late AnimationController _controller;
   late TabController _tabController;
   final _notificationKey = GlobalKey();
 
   final List<CategoryItem> categories = [
-    CategoryItem('All', 'assets/icons/shopping-basket.png', const Color(0xFFFC8019)),
-    CategoryItem('Vegetables', 'assets/icons/vegetable.png', const Color(0xFF4CAF50)),
-    CategoryItem('Fruits', 'assets/icons/fruits.png', const Color(0xFF2196F3)),
+    CategoryItem('All', 'assets/icons/bag.svg', const Color(0xFFFC8019)),
+    CategoryItem('Vegetables', 'assets/icons/tomato.svg', const Color(0xFF4CAF50)),
+    CategoryItem('Fruits', 'assets/icons/apple.svg', const Color(0xFF2196F3)),
   ];
 
   @override
   void initState() {
     super.initState();
-    _selectedIndex = 0;
     _controller = AnimationController(duration: const Duration(milliseconds: 500), vsync: this);
-    _tabController = TabController(length: categories.length, vsync: this, initialIndex: _selectedIndex);
+    _tabController = TabController(length: categories.length, vsync: this, initialIndex: widget.selectedCategoryIndex);
     _searchFocusNode.addListener(() {
       setState(() => _isSearching = _searchFocusNode.hasFocus);
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant Header oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.selectedCategoryIndex != widget.selectedCategoryIndex) {
+      _tabController.animateTo(widget.selectedCategoryIndex);
+    }
   }
 
   @override
@@ -89,7 +99,7 @@ class _HeaderState extends State<Header> with TickerProviderStateMixin {
     final isDarkMode = theme.brightness == Brightness.dark;
     final backgroundColor = isDarkMode ? const Color(0xFF1E2125) : Colors.white;
     return SliverAppBar(
-      expandedHeight: 200.0,
+      expandedHeight: 190.0,
       floating: false,
       pinned: true,
       backgroundColor: backgroundColor,
@@ -97,7 +107,7 @@ class _HeaderState extends State<Header> with TickerProviderStateMixin {
       surfaceTintColor: backgroundColor,
       flexibleSpace: FlexibleSpaceBar(collapseMode: CollapseMode.pin, background: _buildHeaderContent(isDarkMode)),
       bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(98),
+        preferredSize: const Size.fromHeight(80),
         child: Column(children: [_buildSearchBar(isDarkMode, theme), _buildCategoryBar(theme)]),
       ),
     );
@@ -125,7 +135,7 @@ class _HeaderState extends State<Header> with TickerProviderStateMixin {
               onTap: _showAddressSheet,
               child: Row(
                 children: [
-                  SizedBox(width: 32, height: 32, child: Image.asset("assets/location.png")),
+                  SizedBox(width: 35, height: 35, child: Image.asset("assets/location.png")),
                   const SizedBox(width: 12),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,7 +143,7 @@ class _HeaderState extends State<Header> with TickerProviderStateMixin {
                       Text(
                         'Delivery to Home...',
                         style: TextStyle(
-                          fontSize: 10,
+                          fontSize: 11,
                           color: isDarkMode ? Color(0xFFD1D1D1) : Color(0xFF666666),
                           fontWeight: FontWeight.w500,
                           letterSpacing: 0.2,
@@ -144,7 +154,7 @@ class _HeaderState extends State<Header> with TickerProviderStateMixin {
                       Text(
                         'I-24, 2nd Floor, Honour...',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 15,
                           fontWeight: FontWeight.w700,
                           color: isDarkMode ? Color(0xFFD1D1D1) : Colors.grey[900],
                         ),
@@ -179,8 +189,8 @@ class _HeaderState extends State<Header> with TickerProviderStateMixin {
             onTapCancel: () => setState(() => {}),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 150),
-              width: 40,
-              height: 40,
+              width: 42,
+              height: 42,
               decoration: BoxDecoration(
                 color: isDarkMode ? Color(0xFF23282C) : Colors.grey[200],
                 shape: BoxShape.circle,
@@ -397,101 +407,80 @@ class _HeaderState extends State<Header> with TickerProviderStateMixin {
     return Column(
       children: [
         SizedBox(
-          height: 75,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              // Calculate equal width for each category item
-              final itemWidth = constraints.maxWidth / categories.length;
-
-              return Row(
-                children: List.generate(categories.length, (index) {
-                  final category = categories[index];
-                  final isSelected = _tabController.index == index;
-
-                  return GestureDetector(
-                    onTapDown: (_) => setState(() => {}),
-                    onTapUp: (_) => setState(() => {}),
-                    onTapCancel: () => setState(() => {}),
-                    onTap: () {
-                      _tabController.animateTo(index);
-                      widget.onCategoryChanged(index);
-                      _controller.forward(from: 0);
-                    },
-                    child: SizedBox(width: itemWidth, child: _CategoryItem(category.name, category.icon, isSelected)),
+          height: 60,
+          child: Stack(
+            children: [
+              // Category Items Row
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final itemWidth = constraints.maxWidth / categories.length;
+                  return Row(
+                      children: List.generate(categories.length, (index) {
+                    final category = categories[index];
+                    return GestureDetector(
+                      onTap: () {
+                        _tabController.animateTo(index,
+                          curve: Curves.easeOutCubic,
+                        );
+                        widget.onCategoryChanged(index);
+                      },
+                      child: SizedBox(
+                        width: itemWidth,
+                        child: HeaderCategoryItem(
+                          category.name,
+                          category.icon,
+                          _tabController.index == index,
+                        ),
+                      ),
+                    );
+                  }),
                   );
-                }),
-              );
-            },
+                },
+              ),
+
+              // Curved Indicator - Fixed Position Version
+              Positioned(
+                bottom: 0,
+                left: 0,
+                child: AnimatedBuilder(
+                  animation: _tabController,
+                  builder: (context, child) {
+                    final position = _tabController.animation!.value;
+                    final itemWidth = MediaQuery.of(context).size.width / categories.length;
+                    final indicatorWidth = itemWidth * 0.7;
+
+                    // Calculate exact position without bounce effect
+                    final x = (position * itemWidth) + (itemWidth - indicatorWidth)/2;
+
+                    return Transform.translate(
+                      offset: Offset(x, 0),
+                      child: Container(
+                        width: indicatorWidth,
+                        height: 4.0,
+                        decoration: BoxDecoration(
+                          color: theme.primaryColor,
+                          borderRadius: BorderRadius.circular(3),
+                          boxShadow: [
+                            BoxShadow(
+                              color: theme.primaryColor.withOpacity(0.2),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ),
-        Row(
-          children:
-          categories.asMap().entries.map((entry) {
-            final isSelected = _tabController.index == entry.key;
-            return Expanded(
-              child: Container(
-                height: isSelected ? 3.0 : 0,
-                color: theme.primaryColor,
-              ),
-            );
-          }).toList(),
+        Container(
+          height: 1,
+          color: const Color(0xFFECECEC),
         ),
-        Container(height: 1, color: Color(0xFFECECEC)),
       ],
     );
   }
-}
-
-class _CategoryItem extends StatelessWidget {
-  final String text;
-  final String icon;
-  final bool isSelected;
-
-  const _CategoryItem(this.text, this.icon, this.isSelected);
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDarkMode = theme.brightness == Brightness.dark;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      decoration: BoxDecoration(
-        //border: Border(bottom: BorderSide(color: isSelected ? theme.primaryColor : Colors.transparent, width: 4.0)),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Icon above text
-          SizedBox(width: 40, height: 40, child: Image.asset(icon)),
-          const SizedBox(height: 4),
-          // Category text
-          Text(
-            text,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color:
-                  isDarkMode && isSelected
-                      ? Colors.white
-                      : isSelected
-                      ? Colors.black
-                      : isDarkMode
-                      ? const Color(0xFFD1D1D1)
-                      : const Color(0xFF757575),
-              fontSize: 14,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class CategoryItem {
-  final String name;
-  final String icon;
-  final Color color;
-
-  CategoryItem(this.name, this.icon, this.color);
 }

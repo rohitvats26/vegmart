@@ -6,6 +6,8 @@ class DiscountBanner extends StatelessWidget {
     required this.discount,
     this.bannerTopOffset = -8.0,
     this.bannerLeftOffset = -25.6,
+    this.bannerTextTopOffset = -2.0,
+    this.bannerTextLeftOffset = -10.0,
     this.kWidth = 100.0,
     this.kHeight = 50.0,
     this.kTextSizeLarge = 9.0,
@@ -15,6 +17,8 @@ class DiscountBanner extends StatelessWidget {
   final String? discount;
   final double? bannerTopOffset;
   final double? bannerLeftOffset;
+  final double? bannerTextTopOffset;
+  final double? bannerTextLeftOffset;
   final double? kWidth;
   final double? kHeight;
   final double? kTextSizeLarge;
@@ -39,9 +43,9 @@ class DiscountBanner extends StatelessWidget {
               child: Image.asset("assets/badge2.png", height: kHeight, width: kWidth, fit: BoxFit.fill),
             ),
             Positioned(
-              top: -2.0,
+              top: bannerTextTopOffset,
               bottom: 0,
-              left: -10.0,
+              left: bannerTextLeftOffset,
               // Assuming the inner offset is the same
               right: 0,
               child: Column(

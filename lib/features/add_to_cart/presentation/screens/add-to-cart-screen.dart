@@ -36,7 +36,7 @@ class _AddToCartScreenState extends State<AddToCartScreen> with TickerProviderSt
       price: 43,
       originalPrice: 58,
       quantityCount: 2,
-      imageUrl: 'assets/vegetables/cabbage.png',
+      imageUrl: 'assets/vegetables/Muskmelon.jpeg',
     ),
     CartItemModel(
       title: 'Tender Coconut',
@@ -52,7 +52,7 @@ class _AddToCartScreenState extends State<AddToCartScreen> with TickerProviderSt
       price: 255,
       originalPrice: 318,
       quantityCount: 3,
-      imageUrl: 'assets/vegetables/carrots.jpg',
+      imageUrl: 'assets/vegetables/Muskmelon.jpeg',
     ),
     CartItemModel(
       title: 'Tender Coconut',
@@ -67,10 +67,10 @@ class _AddToCartScreenState extends State<AddToCartScreen> with TickerProviderSt
       quantity: '1 Pack',
       price: 54,
       quantityCount: 1,
-      imageUrl: 'assets/vegetables/carrots.jpg',
+      imageUrl: 'assets/vegetables/Muskmelon.jpeg',
     ),
     CartItemModel(title: 'Potato', quantity: '1 kg', price: 35, quantityCount: 1, imageUrl: 'assets/vegetables/carrots.jpg'),
-    CartItemModel(title: 'Carrot', quantity: '500 g', price: 20, quantityCount: 1, imageUrl: 'assets/vegetables/carrots.jpg'),
+    CartItemModel(title: 'Carrot', quantity: '500 g', price: 20, quantityCount: 1, imageUrl: 'assets/vegetables/Muskmelon.jpeg'),
   ];
 
   @override

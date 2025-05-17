@@ -230,7 +230,7 @@ class __ProductPopupContentState extends State<_ProductPopupContent> {
                       decoration: BoxDecoration(color: isDarkMode ? Colors.grey[800] : const Color(0xFFF5F5F5)),
                       child: ClipRRect(
                         borderRadius: const BorderRadius.all(Radius.circular(10)),
-                        child: Image.network(
+                        child: Image.asset(
                           option.imagePath,
                           width: double.infinity,
                           fit: BoxFit.cover,
@@ -341,12 +341,14 @@ class __ProductPopupContentState extends State<_ProductPopupContent> {
           if (option.discount != null)
             DiscountBanner(
               discount: option.discount,
-              bannerTopOffset: 6,
-              bannerLeftOffset: -10,
-              kHeight: 50,
-              kWidth: 80,
-              kTextSizeLarge: 8,
-              kTextSizeSmall: 7,
+              bannerTopOffset: 5,
+              bannerLeftOffset: -6.0,
+              kHeight: 35,
+              kWidth: 60,
+              bannerTextLeftOffset: -6.0,
+              bannerTextTopOffset: -1.0,
+              kTextSizeLarge: 7,
+              kTextSizeSmall: 6,
             ),
         ],
       ),
@@ -377,7 +379,7 @@ class __ProductPopupContentState extends State<_ProductPopupContent> {
           _buildSvgButton(
             height: 15.0,
             width: 15.0,
-            svgAsset: 'icons/minus.svg',
+            svgAsset: 'assets/icons/minus.svg',
             color: theme.primaryColor,
             onTap: count > 0 ? () => setState(() => _itemCounts[index] = count - 1) : null,
           ),
@@ -393,7 +395,7 @@ class __ProductPopupContentState extends State<_ProductPopupContent> {
           _buildSvgButton(
             height: 16,
             width: 16,
-            svgAsset: 'icons/plus.svg',
+            svgAsset: 'assets/icons/plus.svg',
             color: theme.primaryColor,
             onTap: () => setState(() => _itemCounts[index] = count + 1),
           ),

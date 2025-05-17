@@ -3,8 +3,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:vegmart/core/theme/app_colors.dart';
 import 'package:vegmart/core/widgets/product_add_popup.dart';
+import 'package:vegmart/core/widgets/product_card.dart';
 import 'package:vegmart/features/product/presentation/screens/product_detail_screen.dart';
-import 'package:vegmart/features/product/presentation/widgets/product_card.dart';
 import 'package:vegmart/features/product/presentation/widgets/shimmer_product_card.dart';
 
 class ProductSearchScreen extends StatefulWidget {
@@ -24,62 +24,7 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> with SingleTi
   bool showSuggestions = false;
   bool isSearching = false;
 
-  final List<Map<String, dynamic>> products = [
-    {
-      'title': 'Medium Spices Pack',
-      'image': 'assets/vegetables/Muskmelon.jpeg',
-      'currentPrice': '16',
-      'originalPrice': '25',
-      'quantity': '1 piece',
-      'discount': '21%',
-    },
-    {
-      'title': 'Small Bundle Pack',
-      'image': 'assets/vegetables/carrots.jpg',
-      'currentPrice': '20',
-      'originalPrice': '35',
-      'quantity': '500gm',
-      'discount': '15% OFF',
-    },
-    {
-      'title': 'Big Finite Pack',
-      'image': 'assets/vegetables/Muskmelon.jpeg',
-      'currentPrice': '32',
-      'originalPrice': '45',
-      'quantity': '1kg',
-      'discount': '10% OFF',
-    },
-    {
-      'title': 'Big Finite Pack',
-      'image': 'assets/vegetables/Muskmelon.jpeg',
-      'currentPrice': '32',
-      'originalPrice': '45',
-      'quantity': '1kg',
-      'discount': '10% OFF',
-    },
-    {
-      'title': 'Big Finite Pack',
-      'image': 'assets/vegetables/Muskmelon.jpeg',
-      'currentPrice': '32',
-      'originalPrice': '45',
-      'quantity': '1kg',
-      'discount': '10% OFF',
-    },{
-      'title': 'Big Finite Pack',
-      'image': 'assets/vegetables/Muskmelon.jpeg',
-      'currentPrice': '32',
-      'originalPrice': '45',
-      'quantity': '1kg',
-      'discount': '10% OFF',
-    },{
-      'title': 'Big Finite Pack',
-      'image': 'assets/vegetables/Muskmelon.jpeg',
-      'currentPrice': '32',
-      'originalPrice': '45',
-      'quantity': '1kg',
-      'discount': '10% OFF',
-    },
-  ];
+  final List<Map<String, dynamic>> products = [];
 
   @override
   void initState() {
@@ -87,6 +32,16 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> with SingleTi
     _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
     _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
     _searchFocusNode.addListener(_handleFocusChange);
+    for (int i = 0; i < 10; i++){
+      products.add({
+        'title': 'Medium Spices Pack',
+        'image': 'assets/vegetables/Muskmelon.jpeg',
+        'currentPrice': '16',
+        'originalPrice': '25',
+        'quantity': '1 piece',
+        'discount': '21%',
+      });
+    }
   }
 
   void _handleFocusChange() {
@@ -154,7 +109,7 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> with SingleTi
 
   AppBar _buildAppBar(ThemeData theme, bool isDarkMode, bool isTablet, bool isDesktop) {
     return AppBar(
-      automaticallyImplyLeading: true,
+      automaticallyImplyLeading: false,
       backgroundColor: isDarkMode ? Colors.grey[900] : Color(0xFFF8F9FA),
       toolbarHeight: isTablet ? 120 : 80,
       // Set custom height for AppBar
@@ -257,9 +212,9 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> with SingleTi
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: crossAxisCount,
-            crossAxisSpacing: isExtraLargeDesktop ? 15 : 8.0,
-            mainAxisSpacing: 8.0,
-            mainAxisExtent: 310,
+            crossAxisSpacing: 15,
+            mainAxisSpacing: 15,
+            mainAxisExtent: 328,
           ),
           itemCount: products.length,
           itemBuilder:
@@ -271,6 +226,7 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> with SingleTi
                 tag: 'Most Bought',
                 quantity: products[index]['quantity'],
                 discount: products[index]['discount'],
+                useCompactLayout: false,
                 onProductTap: () {
                   Navigator.push(context, MaterialPageRoute(
                     builder: (context) => ProductDetailScreen(),

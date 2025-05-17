@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:vegmart/features/add_to_cart/presentation/screens/add-to-cart-screen.dart';
 
 class NavigationBottomBar extends StatefulWidget {
   final int selectedIndex;
@@ -178,8 +179,7 @@ class _NavigationBottomBarState extends State<NavigationBottomBar> {
                         ),
                       ),
                       // Badge
-                      if (badgeCount != null && badgeCount > 0)
-                        Positioned(right: 0, top: 0, child: _buildBadge(badgeCount, theme)),
+                      if (badgeCount != null && badgeCount > 0) Positioned(right: 0, top: 0, child: _buildBadge(badgeCount, theme)),
                     ],
                   ),
                 ),
@@ -191,12 +191,7 @@ class _NavigationBottomBarState extends State<NavigationBottomBar> {
                     child: AnimatedDefaultTextStyle(
                       duration: widget.animationDuration,
                       curve: widget.animationCurve,
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: color,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                        height: 1.1,
-                      ),
+                      style: TextStyle(fontSize: 10, color: color, fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal, height: 1.1),
                       child: Text(label, overflow: TextOverflow.ellipsis, maxLines: 1, textAlign: TextAlign.center),
                     ),
                   ),

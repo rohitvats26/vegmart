@@ -153,7 +153,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> with Sing
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Lottie.asset(
-                      'animations/success.json',
+                      'assets/animations/success.json',
                       width: _responsiveSize(context, 150, 180, 200, 300),
                       height: _responsiveSize(context, 150, 180, 200, 300),
                       fit: BoxFit.contain,

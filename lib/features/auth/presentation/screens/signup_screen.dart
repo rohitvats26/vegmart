@@ -25,12 +25,12 @@ class _SignupScreenState extends State<SignupScreen> with SingleTickerProviderSt
 
   // List of avatar URLs (placeholders; replace with local assets if needed)
   final List<String> _avatars = [
-    'avatars/avatar1.png',
-    'avatars/avatar2.png',
-    'avatars/avatar3.png',
-    'avatars/avatar4.png',
-    'avatars/avatar5.png',
-    'avatars/avatar6.png',
+    'assets/avatars/avatar1.png',
+    'assets/avatars/avatar2.png',
+    'assets/avatars/avatar3.png',
+    'assets/avatars/avatar4.png',
+    'assets/avatars/avatar5.png',
+    'assets/avatars/avatar6.png',
   ];
 
   // Selected avatar (initially null)
@@ -118,7 +118,8 @@ class _SignupScreenState extends State<SignupScreen> with SingleTickerProviderSt
                               this.setState(() {
                                 _selectedAvatar = _avatars[index];
                               });
-                              _saveAvatar(_avatars[index]); // Save the selected avatar
+                              _saveAvatar(_avatars[index]);
+                              Navigator.pop(context); // Save the selected avatar
                             },
                             child:
                                 AnimatedScale(

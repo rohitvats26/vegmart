@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:vegmart/core/presentation/layouts/main_layout.dart';
 import 'package:vegmart/core/theme/app_theme.dart';
-import 'package:vegmart/features/home/presentation/screens/home_screen.dart';
-import 'package:vegmart/features/product/presentation/screens/product_search_screen.dart';
 
 
 void main() async {
@@ -23,7 +22,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      home: HomeScreen(),//LoginScreen(permissionGranted: permissionGranted),
+      home: MainLayout(),//LoginScreen(permissionGranted: permissionGranted),
     );
   }
 }

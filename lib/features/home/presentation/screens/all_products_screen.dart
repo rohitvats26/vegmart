@@ -15,7 +15,6 @@ class AllProductsScreen extends StatefulWidget {
 }
 
 class _AllProductsScreenState extends State<AllProductsScreen> {
-  final ScrollController _scrollController = ScrollController();
   late PageController _pageController;
   int _currentPage = 0;
   final List<String> imageAssets = ["assets/banners/banner1.png", "assets/banners/banner2.png", "assets/banners/banner3.png"];
@@ -56,7 +55,6 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
     final isExtraLargeDesktop = screenWidth > 1400;
 
     return CustomScrollView(
-      controller: _scrollController,
       slivers: [
         SliverToBoxAdapter(child: _buildPromoBanner(imageAssets, theme, isDarkMode, isMobile, isTablet, isDesktop, isExtraLargeDesktop)),
         SliverPadding(padding: EdgeInsets.only(top: 12)),

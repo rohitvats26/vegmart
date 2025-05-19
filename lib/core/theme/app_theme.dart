@@ -65,6 +65,7 @@ class AppTheme {
         fontFamily: 'SFProText',
       ),
     ),
+    dividerColor: Colors.grey[300],
     extensions: <ThemeExtension<dynamic>>[
       AppColors.light,
     ],

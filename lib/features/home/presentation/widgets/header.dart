@@ -99,6 +99,7 @@ class _HeaderState extends State<Header> with TickerProviderStateMixin {
     final isDarkMode = theme.brightness == Brightness.dark;
     final backgroundColor = isDarkMode ? const Color(0xFF1E2125) : Colors.white;
     return SliverAppBar(
+      automaticallyImplyLeading: false,
       expandedHeight: 190.0,
       floating: false,
       pinned: true,

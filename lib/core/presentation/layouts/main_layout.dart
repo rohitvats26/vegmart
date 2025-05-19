@@ -3,6 +3,7 @@ import 'package:vegmart/core/presentation/layouts/navigation_bottom_bar.dart';
 import 'package:vegmart/features/add_to_cart/presentation/screens/add-to-cart-screen.dart';
 import 'package:vegmart/features/home/presentation/screens/flash_deal_screen.dart';
 import 'package:vegmart/features/home/presentation/screens/home_screen.dart';
+import 'package:vegmart/features/order/presentation/screens/orders_screen.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -56,7 +57,7 @@ class _MainLayoutState extends State<MainLayout> {
         physics: const NeverScrollableScrollPhysics(), // Disable swiping between pages
         children: <Widget>[
           const HomeScreen(),
-          const Center(child: Text('Orders Screen')), // Replace with your actual screens
+          OrdersScreen(),
           const FlashDealScreen(),
           Center(child: SizedBox.shrink()),
           const Center(child: Text('Profile Screen')),

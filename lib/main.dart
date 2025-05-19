@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vegmart/core/presentation/layouts/main_layout.dart';
 import 'package:vegmart/core/theme/app_theme.dart';
+import 'package:vegmart/features/auth/presentation/screens/login_screen.dart';
 
 
 void main() async {

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vegmart/core/presentation/layouts/main_layout.dart';
 import 'package:vegmart/features/home/presentation/screens/home_screen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -521,7 +522,7 @@ class _SignupScreenState extends State<SignupScreen> with SingleTickerProviderSt
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
-          pageBuilder: (_, __, ___) => const HomeScreen(),
+          pageBuilder: (_, __, ___) => const MainLayout(),
           transitionsBuilder: (_, animation, __, child) {
             return FadeTransition(opacity: animation, child: child);
           },
